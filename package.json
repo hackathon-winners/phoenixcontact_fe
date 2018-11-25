@@ -7,7 +7,8 @@
     "react": "^16.7.0-alpha.0",
     "react-dom": "^16.7.0-alpha.0",
     "react-router": "^4.3.1",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "spectacle": "^5.2.2"
   },
   "devDependencies": {
     "react-scripts": "2.1.1"

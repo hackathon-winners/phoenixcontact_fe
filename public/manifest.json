@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Automation Hackathon",
+  "name": "Frontend for our Phoenix Contact Usecase",
   "icons": [
     {
       "src": "favicon.ico",

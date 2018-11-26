@@ -8,8 +8,9 @@
 # testing
 /coverage
 
-# production
-# /build
+# server
+/server/*.jpg
+/server/*.png
 
 # misc
 .DS_Store

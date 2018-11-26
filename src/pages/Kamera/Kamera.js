@@ -12,7 +12,7 @@ export default function() {
     var fileField = document.querySelector("input[type='file']");
     formData.append("foto", fileField.files[0]);
 
-    fetch("http://automation.hack:5000/image", {
+    fetch("/image", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "no-cors",
       body: formData

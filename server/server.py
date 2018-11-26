@@ -17,6 +17,7 @@ parser.add_argument("--user", help="Auth User for API Endpoint")
 parser.add_argument("--pwd", help="Auth User PWD for API Endpoint")
 parser.add_argument("--stream_id", help="Stream ID to upload")
 parser.add_argument("--dataset_id", help="Dataset ID to upload")
+parser.add_argument("--indexer", help="Indexer ID for recognition")
 args = parser.parse_args()
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
@@ -44,6 +45,8 @@ def image():
     imagefile = request.files.get('foto', '')
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
+    print(imagefile)
+
     # check
     if imagefile:
         filename = os.path.join(dir_path, secure_filename('myfile.png'))
@@ -58,15 +61,19 @@ def image():
 
     r = requests.post(f'https://vidapi.app.moonvision.io/datasets/{args.dataset_id}/add_image/', files=image_file, data=image_data, auth=auth)
 
+    print(r.json())
     # get image info
     image = r.json()['image']
     img_url = f"https://vidapi.app.moonvision.io/images/{image['id']}/"
 
-    r2 = requests.post("https://vidapi.app.moonvision.io/segment/supervised/", data=dict(images=[img_url], indexer="http://vidapi.app.moonvision.io/indexers/supervised-segmentation/14/"), auth=auth)    
+    r2 = requests.post("https://vidapi.app.moonvision.io/segment/supervised/", data=dict(images=[img_url], indexer=f"http://vidapi.app.moonvision.io/indexers/supervised-segmentation/{args.indexer}/"), auth=auth)    
     segment_id = r2.json()['id']
+
+    print(r2.json())
 
     while True:
         r3 = requests.get(f"http://vidapi.app.moonvision.io/segment/supervised/{segment_id}/", auth=auth)
+        print(r3.json())
         resp = r3.json()
         status = resp["task"][0]["status"]
         
@@ -95,4 +102,9 @@ def setFallback():
     return json.dumps(status_object)
 
 if __name__ == '__main__':
+    # from gevent import pywsgi
+    # from geventwebsocket.handler import WebSocketHandler
+    # server = pywsgi.WSGIServer(('', 5000), app)
+    # server.serve_forever()
+    app.debug=True
     app.run(ssl_context='adhoc')

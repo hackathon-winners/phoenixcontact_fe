@@ -57,6 +57,8 @@ export default function() {
       if (videoEl.current) {
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
           videoEl.current.srcObject = stream;
+          canvasEl.current.width = videoEl.current.width;
+          canvasEl.current.height = videoEl.current.height;
         });
       }
     },
@@ -100,12 +102,7 @@ export default function() {
           autoPlay
           className={source ? styles.hide : ""}
         />
-        <canvas
-          ref={canvasEl}
-          width="320"
-          height="240"
-          className={!source ? styles.hide : ""}
-        />
+        <canvas ref={canvasEl} className={!source ? styles.hide : ""} />
         <button onClick={click} className={styles.button}>
           {!source ? "Capture" : "try again"}
         </button>

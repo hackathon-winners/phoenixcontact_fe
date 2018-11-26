@@ -3,23 +3,24 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // Import Spectacle Core tags
-import { Deck, Heading, Slide } from "spectacle";
+import { Deck, Heading, Slide, CodePane } from "spectacle";
 import createTheme from "spectacle/lib/themes/default";
 
 export default function() {
-  const [message, setMessage] = useState("waiting");
+  const [status, setStatus] = useState({});
   useEffect(() => {
-    const ws = new WebSocket(
-      `ws://${window.location.hostname}:${window.location.port}/echo`
-    );
-    ws.onopen = () => {
-      ws.send("socket open");
-    };
-    ws.onclose = evt => {
-      setMessage("socket closed");
-    };
-    ws.onmessage = evt => {
-      setMessage(evt.data);
+    const timer = window.setInterval(() => {
+      fetch("/status") // body data type must match "Content-Type" header)
+        .then(response => response.json())
+        .catch(error => console.error("Error:", error))
+        .then(response => {
+          console.log(response);
+          setStatus(response);
+        });
+    }, 2000);
+    return () => {
+      // Return callback to run on unmount.
+      window.clearInterval(timer);
     };
   }, []);
 
@@ -44,7 +45,18 @@ export default function() {
         </Heading>
       </Slide>
       <Slide transition={["zoom"]} bgColor="primary">
-        <Link to="/">zur Kamera {message}</Link>
+        <Link to="/">zur Kamera</Link>
+      </Slide>
+      <Slide>
+        <Heading size={1} fit caps lineHeight={1} textColor="secondary">
+          Demo
+        </Heading>
+        {status && status.status && <p>Waiting for Visual Inspection Task</p>}
+        {status && status.url && <img src={status.url} alt="demo" />}
+        {status && status.PIXEL_SUMS && (
+          <CodePane>{status.PIXEL_SUMS}</CodePane>
+        )}
+        {status}
       </Slide>
     </Deck>
   );

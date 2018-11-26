@@ -1,13 +1,32 @@
-import React, { useState } from "react";
+import React, { Fragment, useState, useRef, useEffect } from "react";
 import styles from "./Kamera.module.scss";
+import { Link } from "react-router-dom";
+import fallbackImage from "./default.jpg";
+
+console.log(fallbackImage);
 
 export default function() {
   const [source, setSource] = useState(undefined);
 
-  const sendToServer = e => {
-    var formData = new FormData();
-    var fileField = document.querySelector("input[type='file']");
-    formData.append("foto", fileField.files[0]);
+  const sendToServer = dataUrl => {
+    var byteString;
+    if (dataUrl.split(",")[0].indexOf("base64") >= 0)
+      byteString = atob(dataUrl.split(",")[1]);
+    else byteString = unescape(dataUrl.split(",")[1]);
+    // separate out the mime component
+    var mimeString = dataUrl
+      .split(",")[0]
+      .split(":")[1]
+      .split(";")[0];
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const file = new Blob([ia], { type: mimeString });
+
+    const formData = new FormData();
+    formData.append("foto", file);
 
     fetch("/image", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -15,21 +34,82 @@ export default function() {
       body: formData
     }) // body data type must match "Content-Type" header)
       .then(response => response.json())
-      .catch(error => console.error("Error:", error))
       .then(response => {
         setSource(response.url);
+      })
+      .catch(error => {
+        // fallback solution for connectivity issues during presentation
+        setTimeout(() => {
+          setSource(fallbackImage);
+          fetch("/setfallback").then(response => response.json());
+        }, 2000);
       });
   };
+
+  // video handling
+  const videoEl = useRef();
+  const constraints = {
+    video: true
+  };
+
+  useEffect(
+    () => {
+      if (videoEl.current) {
+        navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+          videoEl.current.srcObject = stream;
+        });
+      }
+    },
+    [videoEl.current]
+  );
+
+  // get context
+  const canvasEl = useRef(null);
+  const [context, setContext] = useState(null);
+  useEffect(
+    () => {
+      if (canvasEl.current) {
+        setContext(canvasEl.current.getContext("2d"));
+      }
+    },
+    [canvasEl.current]
+  );
+
+  // make a foto
+  const click = () => {
+    context.drawImage(
+      videoEl.current,
+      0,
+      0,
+      canvasEl.current.width,
+      canvasEl.current.height
+    );
+    if (source) {
+      setSource(null);
+    } else {
+      setSource(true);
+      sendToServer(canvasEl.current.toDataURL());
+    }
+  };
   return (
-    <div className={styles.container}>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={sendToServer}
-        capture="environment"
-        className={styles.button}
-      />
-      {source && <img src={source} alt="result" />}
-    </div>
+    <Fragment>
+      <div className={styles.container}>
+        <video
+          ref={videoEl}
+          controls
+          autoPlay
+          className={source ? styles.hide : ""}
+        />
+        <canvas
+          ref={canvasEl}
+          width="320"
+          height="240"
+          className={!source ? styles.hide : ""}
+        />
+        <button onClick={click} className={styles.button}>
+          {!source ? "Capture" : "try again"}
+        </button>
+      </div>
+    </Fragment>
   );
 }

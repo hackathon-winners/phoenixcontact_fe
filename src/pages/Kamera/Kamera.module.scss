@@ -6,9 +6,31 @@
   align-items: center;
 
   .button {
-    margin: 20px;
+    width: 80px;
+    height: 80px;
+    border: rgba(red, 0.9) solid 4px;
+    border-radius: 40px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    z-index: 99;
+
+    position: fixed;
+    bottom: 10px;
   }
   .image {
     max-height: 480px;
   }
+
+  video {
+    width: 100%;
+    height: 100vw;
+  }
+  canvas {
+    width: 100%;
+  }
+}
+
+.hide {
+  display: none;
 }

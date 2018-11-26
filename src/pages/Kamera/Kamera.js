@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from "./Kamera.module.scss";
-import { Link } from "react-router-dom";
 
 export default function() {
   const [source, setSource] = useState(undefined);
@@ -10,7 +9,7 @@ export default function() {
     var fileField = document.querySelector("input[type='file']");
     formData.append("foto", fileField.files[0]);
 
-    fetch("http://automation.hack:5000/image", {
+    fetch("/image", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "no-cors",
       body: formData

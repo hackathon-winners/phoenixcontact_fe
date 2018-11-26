@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
-import styles from "./Presentation.module.scss";
+// import styles from "./Presentation.module.scss";
 import { Link } from "react-router-dom";
 
 // Import Spectacle Core tags
-import {
-  BlockQuote,
-  Cite,
-  Deck,
-  Heading,
-  ListItem,
-  List,
-  Quote,
-  Slide,
-  Text
-} from "spectacle";
+import { Deck, Heading, Slide } from "spectacle";
 import createTheme from "spectacle/lib/themes/default";
 
 export default function() {
   const [message, setMessage] = useState("waiting");
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:5000/echo");
+    const ws = new WebSocket(
+      `ws://${window.location.hostname}:${window.location.port}/echo`
+    );
     ws.onopen = () => {
       ws.send("socket open");
     };

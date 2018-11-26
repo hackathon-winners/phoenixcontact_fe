@@ -107,7 +107,10 @@ def image():
         c = ModbusClient(host="127.0.0.1", port=502)
         c.open()
 
-        c.write_single_register(0, coverage['Coffee']*100)
+        for key, value in coverage.item():
+            c.write_single_register(0, value*100)
+            wait(3)
+            
         c.close()
     except Exception as e:
         print(e)

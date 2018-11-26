@@ -1,4 +1,14 @@
 @import "utilities.scss";
 
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .button {
+    margin: 20px;
+  }
+  .image {
+    max-height: 480px;
+  }
 }

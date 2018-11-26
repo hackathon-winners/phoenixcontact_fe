@@ -3,7 +3,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // Import Spectacle Core tags
-import { Deck, Heading, Slide, CodePane } from "spectacle";
+import {
+  Deck,
+  Heading,
+  Slide,
+  CodePane,
+  Layout,
+  Text,
+  Image,
+  Fill
+} from "spectacle";
 import createTheme from "spectacle/lib/themes/default";
 
 export default function() {
@@ -51,12 +60,23 @@ export default function() {
         <Heading size={1} fit caps lineHeight={1} textColor="secondary">
           Demo
         </Heading>
-        {status && status.status && <p>Waiting for Visual Inspection Task</p>}
-        {status && status.url && <img src={status.url} alt="demo" />}
-        {status && status.PIXEL_SUMS && (
-          <CodePane>{status.PIXEL_SUMS}</CodePane>
-        )}
-        {status}
+        <Layout>
+          {status && status.status && (
+            <Fill>
+              <Text>Waiting for Visual Inspection Task</Text>
+            </Fill>
+          )}
+          {status && status.url && (
+            <Fill>
+              <Image src={status.url} alt="demo" />
+            </Fill>
+          )}
+          {status && status.pixel_sums && (
+            <Fill>
+              <CodePane>{status.pixel_sums}</CodePane>
+            </Fill>
+          )}
+        </Layout>
       </Slide>
     </Deck>
   );

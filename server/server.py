@@ -17,6 +17,7 @@ parser.add_argument("--user", help="Auth User for API Endpoint")
 parser.add_argument("--pwd", help="Auth User PWD for API Endpoint")
 parser.add_argument("--stream_id", help="Stream ID to upload")
 parser.add_argument("--dataset_id", help="Dataset ID to upload")
+parser.add_argument("--indexer", help="Indexer ID to process")
 args = parser.parse_args()
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
@@ -46,11 +47,8 @@ def image():
 
     # check
     if imagefile:
-        filename = os.path.join(dir_path, secure_filename('myfile.png'))
-        f = open(filename, 'wb') #imagefile.save(filename)
-        bytes = imagefile.read(1024*1024)
-        f.write(bytes)
-        f.close()
+        filename = os.path.join(dir_path, secure_filename(imagefile.filename))
+        imagefile.save(filename)
 
     # save image
     image_file = {'image': open(filename, 'rb')}
@@ -62,7 +60,7 @@ def image():
     image = r.json()['image']
     img_url = f"https://vidapi.app.moonvision.io/images/{image['id']}/"
 
-    r2 = requests.post("https://vidapi.app.moonvision.io/segment/supervised/", data=dict(images=[img_url], indexer="http://vidapi.app.moonvision.io/indexers/supervised-segmentation/14/"), auth=auth)    
+    r2 = requests.post("https://vidapi.app.moonvision.io/segment/supervised/", data=dict(images=[img_url], indexer=f"http://vidapi.app.moonvision.io/indexers/supervised-segmentation/{args.indexer}/"), auth=auth)    
     segment_id = r2.json()['id']
 
     while True:
@@ -95,4 +93,4 @@ def setFallback():
     return json.dumps(status_object)
 
 if __name__ == '__main__':
-    app.run(ssl_context='adhoc')
+    app.run(host='0.0.0.0')

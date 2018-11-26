@@ -36,13 +36,14 @@ pip3 install flask
 pip3 install flask_sockets
 pip3 install flask_cors
 pip3 install requests
-pip3 install pyOpenSSL
+pip3 install Pillow
 
 python server/server.py \
 --user <BASIC AUTH USER> \
 --pwd <BASIC AUTH PWD> \
 --stream_id <STREAM ID> \
 --dataset_id <DATASET ID>
+--indexer <INDEXER ID>
 ```
 
 ## Development Frontend

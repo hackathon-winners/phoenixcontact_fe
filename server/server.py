@@ -7,8 +7,8 @@ from requests.auth import HTTPBasicAuth
 from werkzeug.utils import secure_filename
 import os
 import json
-
 import argparse
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--user", help="Auth User for API Endpoint")
 parser.add_argument("--pwd", help="Auth User PWD for API Endpoint")

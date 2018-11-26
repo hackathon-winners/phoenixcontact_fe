@@ -1,7 +1,52 @@
 # Automation Hackathon with Phoenix Contact
 
-## Available Scripts
+This Projects enables the PLC Next Controller to do Image processing and gives it AI capabilities, that can be transformed to an App to the PLCnext Store after launch.
 
+## Install Python setup on PLCnext Control unit
+
+```python
+# set super user
+su
+
+# check for disc space
+df -h
+
+# install package manager
+# change for x86
+wget -O - http://ipkg.nslu2-linux.org/optware-ng/bootstrap/buildroot-armeabihf-bootstrap.sh | sh
+# check if the date is correct (otherwise the ssl handshake goes bad)
+date -R
+# set date (if necessary)
+date --set <yyyy-mm-dd>
+date --set <hh:mm>
+# add all relevant paths
+export PATH=$PATH:/opt/bin:/opt/sbin:/opt/local/bin/
+
+# install packages
+ipkg install python3
+alias python=/opt/bin/python3.7
+# install necessary packages
+ipkg install py3-pip
+ipkg install gcc
+
+# update pip
+pip3 install --upgrade pip
+
+pip3 install flask
+pip3 install flask_sockets
+pip3 install flask_cors
+pip3 install requests
+
+python server/server.py \
+--user <BASIC AUTH USER> \
+--pwd <BASIC AUTH PWD> \
+--stream_id <STREAM ID> \
+--dataset_id <DATASET ID>
+```
+
+## Development Frontend
+
+Make sure you have NPM and yarn installed.
 In the project directory, you can run:
 
 ### `yarn start`

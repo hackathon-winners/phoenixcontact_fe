@@ -12,12 +12,14 @@ import os
 import json
 import argparse
 
+from PIL import Image
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--user", help="Auth User for API Endpoint")
 parser.add_argument("--pwd", help="Auth User PWD for API Endpoint")
 parser.add_argument("--stream_id", help="Stream ID to upload")
 parser.add_argument("--dataset_id", help="Dataset ID to upload")
-parser.add_argument("--indexer", help="Indexer ID to process")
+parser.add_argument("--indexer", type=int, default=15, help="Indexer ID to process")
 args = parser.parse_args()
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
@@ -50,6 +52,22 @@ def image():
         filename = os.path.join(dir_path, secure_filename(imagefile.filename))
         imagefile.save(filename)
 
+
+    # reisze image with PIL
+    try:
+        image = Image.open(filename)
+
+        fixed_size_w = 843
+        w, h = image.size
+        scaling_factor = fixed_size_w / w
+        h_new = int(round(scaling_factor * h))
+        print(f"H x W {h_new} x {fixed_size_w}")
+        image.resize((fixed_size_w, h_new))
+        image.save(filename)
+    except Exception as e:
+        print(f"Error happened during resizing with params: {scaling_factor}, height: {h_new} and filename: {filename}")
+        raise Exception
+
     # save image
     image_file = {'image': open(filename, 'rb')}
     image_data = {'stream_id': args.stream_id}
@@ -60,31 +78,41 @@ def image():
     image = r.json()['image']
     img_url = f"https://vidapi.app.moonvision.io/images/{image['id']}/"
 
-    r2 = requests.post("https://vidapi.app.moonvision.io/segment/supervised/", data=dict(images=[img_url], indexer=f"http://vidapi.app.moonvision.io/indexers/supervised-segmentation/{args.indexer}/"), auth=auth)    
+    r2 = requests.post("https://vidapi.app.moonvision.io/segment/supervised/", data=dict(images=[img_url], indexer=f"http://vidapi.app.moonvision.io/indexers/supervised-segmentation/{args.indexer}/"), auth=auth)
+
     segment_id = r2.json()['id']
 
+    loop_iter = 0
     while True:
         r3 = requests.get(f"http://vidapi.app.moonvision.io/segment/supervised/{segment_id}/", auth=auth)
         resp = r3.json()
         status = resp["task"][0]["status"]
-        
+        loop_iter += 1
+
         if status=="finished":
             result = resp["task"][0]
             break
-    
+
     img_url, pixel_sums, confidences = json.loads(result["result"])
 
-    try: 
+    print(pixel_sums)
+    coverage = {}
+    total_sum = h_new * fixed_size_w
+
+    for key, value in pixel_sums.items():
+        coverage[key] = round(value / total_sum, 3)
+        print(f"For {key} got {coverage[key] * 100} % coverage")
+
+    try:
         c = ModbusClient(host="127.0.0.1", port=502)
         c.open()
 
-        for key, value in confidences.items():
-            c.write_single_register(0,value*100)
+        c.write_single_register(0, coverage['Coffee']*100)
         c.close()
     except Exception as e:
         print(e)
 
-    status_object = dict(url=img_url, pixel_sums=pixel_sums, confidences=confidences)
+    status_object = dict(url=img_url, pixel_sums=pixel_sums, confidences=confidences, coverage=coverage['Coffee'])
     return json.dumps(status_object)
 
 @app.route('/setfallback', methods=['GET'])

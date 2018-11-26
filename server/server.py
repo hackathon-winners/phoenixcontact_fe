@@ -1,8 +1,10 @@
 # Copy of http://stackoverflow.com/a/20104705
 from flask import Flask, render_template, jsonify, request
 from flask_sockets import Sockets
+from flask_cors import CORS
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
+CORS(app)
 app.debug = True
 
 sockets = Sockets(app)
@@ -19,7 +21,7 @@ def index():
 
 @app.route('/image', methods=['GET', 'POST'])
 def image():
-    # imagefile = request.files.get('image', '')
+    imagefile = request.files.get('foto', '')
     # convert string of image data to uint8
     # nparr = np.fromstring(r.data, np.uint8)
     # decode image

@@ -107,7 +107,7 @@ def image():
         coffe_cover_value = coverage['Coffee']
         c = ModbusClient(host="127.0.0.1", port=502)
         c.open()
-       c.write_single_register(0, coffe_cover_value)    
+        c.write_single_register(0, coffe_cover_value)    
         c.close()
     except Exception as e:
         print(e)

@@ -22,6 +22,10 @@
     padding: 10px;
     box-sizing: border-box;
     input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: 100px;
       opacity: 0;
     }
   }

@@ -59,10 +59,12 @@ def image():
 
         fixed_size_w = 843
         w, h = image.size
+        print(h)
+        print(w)
 
         if w > h:
             print('breiter')
-            image.rotate(90)
+            image = image.rotate(90)
             w, h = image.size
         print(h)
         print(w)

@@ -59,19 +59,13 @@ def image():
 
         fixed_size_w = 843
         w, h = image.size
-        print(h)
-        print(w)
 
         if w > h:
-            print('breiter')
-            image = image.rotate(90, expand=True)
+            image = image.rotate(270, expand=True)
             w, h = image.size
 
-        print(h)
-        print(w)
         scaling_factor = fixed_size_w / w
         h_new = int(round(scaling_factor * h))
-        print(f"H x W {h_new} x {fixed_size_w}")
         image.resize((fixed_size_w, h_new))
         image.save(filename)
     except Exception as e:
@@ -105,13 +99,12 @@ def image():
 
     img_url, pixel_sums, confidences = json.loads(result["result"])
 
-    print(pixel_sums)
     coverage = {}
     total_sum = h_new * fixed_size_w
 
     for key, value in pixel_sums.items():
         coverage[key] = int(round(value / fixed_size_w**2 * 100))
-        print(f"For {key} got {coverage[key]} % coverage")
+        # print(f"For {key} got {coverage[key]} % coverage")
 
     try:
         coffe_cover_value = coverage['Coffee']

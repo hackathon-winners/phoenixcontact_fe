@@ -59,6 +59,11 @@ def image():
 
         fixed_size_w = 843
         w, h = image.size
+
+        if w > h:
+            image.rotate(90)
+            w, h = image.size
+        
         scaling_factor = fixed_size_w / w
         h_new = int(round(scaling_factor * h))
         print(f"H x W {h_new} x {fixed_size_w}")
@@ -100,7 +105,7 @@ def image():
     total_sum = h_new * fixed_size_w
 
     for key, value in pixel_sums.items():
-        coverage[key] = int(round(value / fixed_size_w**2 * 100, 3))
+        coverage[key] = int(round(value / fixed_size_w**2 * 100))
         print(f"For {key} got {coverage[key]} % coverage")
 
     try:

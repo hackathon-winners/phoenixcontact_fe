@@ -6,20 +6,35 @@
   align-items: center;
 
   .button {
+    display: flex;
+    align-items: center;
+    text-align: center;
     width: 80px;
     height: 80px;
     border: rgba(red, 0.9) solid 4px;
-    border-radius: 40px;
+    border-radius: 100%;
     background: red;
     color: white;
     font-weight: bold;
     z-index: 99;
-
     position: fixed;
     bottom: 60px;
+    padding: 10px;
+    box-sizing: border-box;
+    input[type="file"] {
+      opacity: 0;
+    }
   }
   .image {
     max-height: 480px;
+    max-width: 100%;
+  }
+  .loading {
+    margin-top: 100px;
+  }
+  .waiting {
+    padding-top: 100px;
+    color: #fff;
   }
 }
 

@@ -4,6 +4,7 @@ html {
   margin: 0;
   padding: 0;
   min-height: 100%;
+  background: linear-gradient(90deg, #36d7b7, #2b303b);
 }
 body {
   margin: 0;

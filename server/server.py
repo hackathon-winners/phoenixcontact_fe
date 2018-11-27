@@ -100,17 +100,14 @@ def image():
     total_sum = h_new * fixed_size_w
 
     for key, value in pixel_sums.items():
-        coverage[key] = round(value / total_sum, 3)
-        print(f"For {key} got {coverage[key] * 100} % coverage")
+        coverage[key] = int(round(value / fixed_size_w**2 * 100, 3))
+        print(f"For {key} got {coverage[key]} % coverage")
 
     try:
+        coffe_cover_value = coverage['Coffee']
         c = ModbusClient(host="127.0.0.1", port=502)
         c.open()
-
-        for key, value in coverage.item():
-            c.write_single_register(0, value*100)
-            wait(3)
-            
+       c.write_single_register(0, coffe_cover_value)    
         c.close()
     except Exception as e:
         print(e)

@@ -28,6 +28,9 @@ alias python=/opt/bin/python3.7
 # install necessary packages
 ipkg install py3-pip
 ipkg install gcc
+ipkg install zlib
+ipkg install zlib-dev
+ipkg install libjpeg
 
 # update pip
 pip3 install --upgrade pip

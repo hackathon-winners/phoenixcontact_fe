@@ -64,8 +64,9 @@ def image():
 
         if w > h:
             print('breiter')
-            image = image.rotate(90)
+            image = image.rotate(90, expand=True)
             w, h = image.size
+
         print(h)
         print(w)
         scaling_factor = fixed_size_w / w
